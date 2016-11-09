@@ -53,8 +53,8 @@ function varargout = mypatcher( varargin )
     
     % Copyright & License: This code is CC-BY.
     %
-    % Author:  02-May-2013, Michael Ryan
-    % Author: 2015, Benjamin Girault
+    % Author:  02-May-2013, Michael Ryan, v1.0
+    % Author: 2015, Benjamin Girault, v1.1
     
     in = parseInput(varargin{:});
     
