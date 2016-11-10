@@ -63,7 +63,8 @@ function varargout = mypatcher( varargin )
     
     file.lines = regexp(file.text,'\r?\n','split');
     patch.header = regexp(patch.text,'^.*\r?\n.*\r?\n','match','dotexceptnewline');
-    patch.text = regexprep(patch.text,patch.header,'');
+    patch.text = strrep(patch.text,patch.header,'');
+    patch.text = patch.text{1};
     checkNewline = regexp(patch.text,'\ No newline at end of file', 'once');
     if ~isempty(checkNewline)
         patch.text = patch.text(1:checkNewline);
@@ -134,32 +135,30 @@ function varargout = mypatcher( varargin )
         varargout{1}=newtext;
         varargout{2}=out;
     end
-    
-    function outLine = parseLine(inLine)
-        if isempty(regexp(inLine,'^-','once'))
-            outLine = inLine(2:end);
-        else
-            outLine = nan;
-        end
-    end
-    
-    function in=parseInput(varargin)
-        parser = inputParser;
-        
-        parser.addRequired('file',@(x)exist(x,'file'));
-        parser.addRequired('patch',@(x)exist(x,'file'));
-        parser.addOptional('output','',@(x)ischar(x));
-        
-        parser.parse(varargin{:});
-            
-        in.file = parser.Results.file;
-        in.patch = parser.Results.patch;
-        in.output = parser.Results.output;
-        if isempty(in.output)
-            [path, in.output, ext] = fileparts(in.file);  %#ok<ASGLU,NASGU>
-            in.output = [in.output,'.patched'];
-        end
-    end
-        
 end
-    
+
+function outLine = parseLine(inLine)
+    if isempty(regexp(inLine,'^-','once'))
+        outLine = inLine(2:end);
+    else
+        outLine = nan;
+    end
+end
+
+function in=parseInput(varargin)
+    parser = inputParser;
+
+    parser.addRequired('file',@(x)exist(x,'file'));
+    parser.addRequired('patch',@(x)exist(x,'file'));
+    parser.addOptional('output','',@(x)ischar(x));
+
+    parser.parse(varargin{:});
+
+    in.file = parser.Results.file;
+    in.patch = parser.Results.patch;
+    in.output = parser.Results.output;
+    if isempty(in.output)
+        [path, in.output, ext] = fileparts(in.file);  %#ok<ASGLU,NASGU>
+        in.output = [in.output,'.patched'];
+    end
+end
